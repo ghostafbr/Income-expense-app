@@ -5,6 +5,9 @@ import {AppComponent} from "./app/app.component";
 import {HttpClientModule} from "@angular/common/http";
 import {RouterModule} from "@angular/router";
 import {AppRouting} from "./app/app-routing";
+import {AngularFireModule} from "@angular/fire/compat";
+import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
+import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 
 if (environment.production) {
   enableProdMode();
@@ -15,6 +18,9 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       HttpClientModule,
       RouterModule.forRoot(AppRouting, {useHash: true}),
+      AngularFireModule.initializeApp(environment.firebase),
+      AngularFirestoreModule,
+      AngularFireAuthModule
     )
   ],
 }).catch( err => console.error(err));

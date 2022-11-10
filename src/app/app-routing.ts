@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import {DashboardComponent} from "./dashboard/dashboard.component";
+import {AuthGuard} from "./services/auth.guard";
 
   export const AppRouting: Routes = [
     {
@@ -13,7 +14,8 @@ import {DashboardComponent} from "./dashboard/dashboard.component";
     {path: '', component: DashboardComponent, children: [
         {
           path: '',
-          loadChildren: () => import('./dashboard/dashboard.routing').then(mod => mod.DashboardRouting)
+          loadChildren: () => import('./dashboard/dashboard.routing').then(mod => mod.DashboardRouting),
+          canActivate: [AuthGuard]
         }
       ]},
     {path: '**', redirectTo: '' },

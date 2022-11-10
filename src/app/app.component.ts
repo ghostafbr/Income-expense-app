@@ -6,6 +6,7 @@ import {RegisterComponent} from "./auth/register/register.component";
 import {SidebarComponent} from "./shared/sidebar/sidebar.component";
 import {NavbarComponent} from "./shared/navbar/navbar.component";
 import {FooterComponent} from "./shared/footer/footer.component";
+import {AuthService} from "./services/auth.service";
 
 @Component({
   selector: 'app-root',
@@ -16,4 +17,8 @@ import {FooterComponent} from "./shared/footer/footer.component";
 })
 export class AppComponent {
   title = 'incomeexpenseapp';
+
+  constructor( private authService: AuthService ) {
+    this.authService.initAuthListener();
+  }
 }
