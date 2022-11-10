@@ -8,6 +8,8 @@ import {AppRouting} from "./app/app-routing";
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
 import {AngularFireAuthModule} from "@angular/fire/compat/auth";
+import {StoreModule} from "@ngrx/store";
+import {appReducers} from "./app/app.reducer";
 
 if (environment.production) {
   enableProdMode();
@@ -20,7 +22,8 @@ bootstrapApplication(AppComponent, {
       RouterModule.forRoot(AppRouting, {useHash: true}),
       AngularFireModule.initializeApp(environment.firebase),
       AngularFirestoreModule,
-      AngularFireAuthModule
+      AngularFireAuthModule,
+      StoreModule.forRoot(appReducers)
     )
   ],
 }).catch( err => console.error(err));
