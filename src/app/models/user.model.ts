@@ -1,7 +1,13 @@
 export class User {
+
+  // @ts-ignore
+  static fromFirebase({uid, email, name}) {
+    return new User(uid, email, name);
+  }
+
   constructor(
-    public uid: string | undefined,
-    public email: string | null | undefined,
-    public name: string | null
+    public uid: string,
+    public email: string,
+    public name: string
   ) {}
 }

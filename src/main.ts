@@ -10,6 +10,7 @@ import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
 import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {StoreModule} from "@ngrx/store";
 import {appReducers} from "./app/app.reducer";
+import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 
 if (environment.production) {
   enableProdMode();
@@ -23,7 +24,11 @@ bootstrapApplication(AppComponent, {
       AngularFireModule.initializeApp(environment.firebase),
       AngularFirestoreModule,
       AngularFireAuthModule,
-      StoreModule.forRoot(appReducers)
+      StoreModule.forRoot(appReducers),
+      StoreDevtoolsModule.instrument({
+        maxAge: 25,
+        logOnly: environment.production,
+      }),
     )
   ],
 }).catch( err => console.error(err));
