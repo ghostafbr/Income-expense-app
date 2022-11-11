@@ -11,6 +11,8 @@ import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {StoreModule} from "@ngrx/store";
 import {appReducers} from "./app/app.reducer";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
+import {IncomeOrderPipe} from "./app/pipes/income-order.pipe";
+import {NgChartsModule} from "ng2-charts";
 
 if (environment.production) {
   enableProdMode();
@@ -29,6 +31,7 @@ bootstrapApplication(AppComponent, {
         maxAge: 25,
         logOnly: environment.production,
       }),
+      NgChartsModule.forRoot()
     )
   ],
 }).catch( err => console.error(err));

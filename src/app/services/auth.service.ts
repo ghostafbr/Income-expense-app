@@ -6,12 +6,19 @@ import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {AppState} from "../app.reducer";
 import {Store} from "@ngrx/store";
 import * as actions from "../auth/auth.actions";
+import * as incomeExpenseActions from "../income-expense/income-expense.actions";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   userSubscription: Subscription | undefined;
+  // @ts-ignore
+  private _user: User;
+
+  get user() {
+    return this._user;
+  }
 
   constructor( public auth: AngularFireAuth, private fireStore: AngularFirestore, private store: Store<AppState> ) {
 
@@ -23,15 +30,18 @@ export class AuthService {
         // existe
         this.userSubscription = this.fireStore.doc(`${ fuser.uid }/usuario`).valueChanges()
           .subscribe( (firestoreUser: any) => {
-            console.log({firestoreUser});
             const user = User.fromFirebase( firestoreUser );
-            this.store.dispatch( actions.setUser({ user }) );
+            this._user = user;
+            this.store.dispatch( actions.setUser({ user }));
           });
 
       } else {
         // no existe
+        // @ts-ignore
+        this._user = null;
         this.userSubscription?.unsubscribe();
         this.store.dispatch( actions.unSetUser() );
+        this.store.dispatch( incomeExpenseActions.unSetItems() );
       }
 
     });
