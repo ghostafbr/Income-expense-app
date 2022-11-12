@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -17,27 +18,25 @@ import * as ui from "../shared/ui.actions";
   styleUrls: ['./income-expense.component.css']
 })
 export class IncomeExpenseComponent implements OnInit, OnDestroy {
-  // @ts-ignore
   incomeForm: FormGroup;
   type: string = 'income';
   isLoading: boolean = false;
-  uiSubscription: Subscription | undefined;
+  uiSubscription: Subscription;
 
   constructor(
     private fb: FormBuilder,
-    private incomeExpenseServiceService: IncomeExpenseServiceService,
+    private incomeExpenseService: IncomeExpenseServiceService,
     private store: Store<AppState>
   ) { }
 
   ngOnInit(): void {
+    this.uiSubscription = this.store.select('ui')
+      .subscribe( ({ isLoading }) => this.isLoading = isLoading );
     this.initForm();
-    this.uiSubscription = this.store.select('ui').subscribe( ui => {
-      this.isLoading = ui.isLoading;
-    });
   }
 
   ngOnDestroy(): void {
-    this.uiSubscription?.unsubscribe();
+    this.uiSubscription.unsubscribe();
   }
 
   initForm() {
@@ -52,16 +51,18 @@ export class IncomeExpenseComponent implements OnInit, OnDestroy {
       return;
     }
     this.store.dispatch( ui.isLoading() );
+
     const { description, amount } = this.incomeForm.value;
     const incomeExpense = new IncomeExpense( description, amount, this.type );
-    this.incomeExpenseServiceService.createIncomeExpense( incomeExpense )
+
+    this.incomeExpenseService.createIncomeExpense( incomeExpense )
       .then( () => {
-        Swal.fire('Registro creado', description, 'success');
-        this.store.dispatch( ui.stopLoading() );
         this.incomeForm.reset();
-      }).catch( (err) => {
-        Swal.fire('Error', err.message, 'error');
         this.store.dispatch( ui.stopLoading() );
+        Swal.fire('Registro creado', description, 'success');
+      }).catch( (err) => {
+        this.store.dispatch( ui.stopLoading() );
+      Swal.fire('Error', err.message, 'error');
     });
   }
 }

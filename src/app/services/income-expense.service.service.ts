@@ -9,12 +9,14 @@ import {map} from "rxjs";
 })
 export class IncomeExpenseServiceService {
 
-  constructor( private fireStore: AngularFirestore, private authService: AuthService ) {
+  constructor( private fireStore: AngularFirestore,
+               private authService: AuthService ) {
 
   }
 
   createIncomeExpense( incomeExpense: IncomeExpense ) {
     const uid = this.authService.user.uid;
+    delete incomeExpense.uid;
     return this.fireStore.doc(`${uid}/income-expense`)
       .collection('items')
       .add({...incomeExpense})

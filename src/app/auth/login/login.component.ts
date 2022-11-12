@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {Router, RouterLinkWithHref} from "@angular/router";
@@ -17,30 +18,34 @@ import {Subscription} from "rxjs";
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  loginForm: FormGroup;
-  isLoading: boolean = false;
-  uiSubscription: Subscription | undefined;
 
-  constructor( private fb: FormBuilder, private authService: AuthService, private router: Router, private store: Store<AppState>) {
-    this.loginForm = fb.group({});
-  }
+
+  loginForm: FormGroup;
+  uiSubscription: Subscription;
+  isLoading: boolean = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private store: Store<AppState>
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
-
     this.uiSubscription = this.store.select('ui').subscribe( ui => {
       this.isLoading = ui.isLoading;
     });
   }
 
   ngOnDestroy(): void {
-    this.uiSubscription?.unsubscribe();
+    this.uiSubscription.unsubscribe();
   }
 
 
   initForm(): void {
     this.loginForm = this.fb.group({
-      email: ['andres.fbramirez@gmail.com', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
   }
@@ -62,6 +67,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     const {email, password} = this.loginForm.value;
     this.authService.signIn(email, password).then( credentials => {
       /*Swal.close();*/
+      console.log( 'Credentials: ', credentials );
       this.store.dispatch( ui.stopLoading() );
       this.router.navigate(['/']);
     }).catch(( err ) => {

@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import {DashboardComponent} from "./dashboard/dashboard.component";
 import {AuthGuard} from "./services/auth.guard";
+import {importProvidersFrom} from "@angular/core";
+import {StoreModule} from "@ngrx/store";
+import {incomeExpenseReducer} from "./income-expense/income-expense.reducer";
 
   export const AppRouting: Routes = [
     {
@@ -11,13 +14,17 @@ import {AuthGuard} from "./services/auth.guard";
       path: 'register',
       loadComponent: () => import('./auth/register/register.component').then(mod => mod.RegisterComponent)
     },
-    {path: '', component: DashboardComponent, children: [
-        {
-          path: '',
-          loadChildren: () => import('./dashboard/dashboard.routing').then(mod => mod.DashboardRouting),
-          canActivate: [AuthGuard]
-        }
-      ]},
+    {
+      path: '',
+      canLoad: [AuthGuard],
+      loadComponent: () => import('./dashboard/dashboard.component').then(mod => mod.DashboardComponent),
+      loadChildren: () => import('./dashboard/dashboard.routing').then(mod => mod.DashboardRouting),
+      providers: [
+        importProvidersFrom(
+          StoreModule.forFeature('incomeExpense', incomeExpenseReducer)
+        ),
+      ],
+    },
     {path: '**', redirectTo: '' },
   ];
 
